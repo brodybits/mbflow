@@ -10,15 +10,16 @@
 
     PORT = 8080
 
-#### HTTP-out mailbox:
-
-    mb = mailbox()
-
 #### HTTP server
 
+    http_out = mailbox()
+    log_out = mailbox()
+
+    mylog = (s) -> if !log_out.isBlocked() then log_out.put s
+
     handleReq = (req, res) ->
-      console.log 'Got request with url: ' + req.url
-      mb.put
+      mylog 'Got request with url: ' + req.url
+      http_out.put
         req: req
         res: res
 
@@ -26,7 +27,7 @@
 
     # BLOCKING:
     runServer = ->
-      srv.listen PORT, -> console.log 'SERVER is listening'
+      srv.listen PORT, -> mylog 'SERVER is listening'
 
 #### App HTTP handler
 
@@ -36,7 +37,18 @@
         m.res.end 'Response from URL: ' + m.req.url + '\n'
         return
 
-    mb.setListener myListener
+    http_out.setListener myListener
+
+#### App Log handler
+
+    logListener =
+      trigger: (mb) ->
+        console.log 'logListener got trigger'
+        s = mb.get()
+        console.log s
+        return
+
+    log_out.setListener logListener
 
 #### Run the HTTP server
 

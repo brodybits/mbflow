@@ -2,13 +2,16 @@
   var mailbox;
 
   mailbox = function() {
-    var contents, full, get, isFull, listener, myself, put, setListener;
+    var contents, full, get, isBlocked, isFull, listener, myself, put, setListener;
     myself = void 0;
     full = false;
     contents = null;
     listener = null;
     isFull = function() {
       return full;
+    };
+    isBlocked = function() {
+      return full || !listener;
     };
     setListener = function(newListener) {
       if (!!newListener && !!listener) {
@@ -22,14 +25,12 @@
     };
     put = function(message) {
       if (full) {
-        return false;
-      } else {
-        contents = message;
-        full = true;
-        if (listener) {
-          listener.trigger(myself);
-        }
-        return true;
+        throw new Error('Cannot put: mail-box is already full');
+      }
+      contents = message;
+      full = true;
+      if (listener) {
+        listener.trigger(myself);
       }
     };
     get = function() {
@@ -45,6 +46,7 @@
     };
     return myself = {
       isFull: isFull,
+      isBlocked: isBlocked,
       setListener: setListener,
       put: put,
       get: get

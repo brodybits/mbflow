@@ -13,6 +13,11 @@
 
       isFull = -> full
 
+      # FUTURE TBD:
+      #hasListener = -> !!listener
+
+      isBlocked = -> full or !listener
+
       setListener = (newListener) ->
         if !!newListener and !!listener then throw new Error "mailbox already has a listener"
 
@@ -23,13 +28,11 @@
         newListener
 
       put = (message) ->
-        if full
-          false
-        else
-          contents = message
-          full = true
-          if listener then listener.trigger myself
-          true
+        if full then throw new Error 'Cannot put: mail-box is already full'
+        contents = message
+        full = true
+        if listener then listener.trigger myself
+        return
 
       get = ->
         if full
@@ -43,6 +46,7 @@
       # store and return my self reference:
       myself =
         isFull: isFull
+        isBlocked: isBlocked
         setListener: setListener
         put: put
         get: get
