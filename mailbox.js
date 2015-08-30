@@ -2,48 +2,53 @@
   var mailbox;
 
   mailbox = function() {
-    var myself;
-    myself = {};
-    myself.full = false;
-    myself.contents = null;
-    myself.listener = null;
-    myself.isFull = function() {
-      return myself.full;
+    var contents, full, get, isFull, listener, myself, put, setListener;
+    myself = void 0;
+    full = false;
+    contents = null;
+    listener = null;
+    isFull = function() {
+      return full;
     };
-    myself.setListener = function(l) {
-      if (!!l && !!myself.listener) {
+    setListener = function(newListener) {
+      if (!!newListener && !!listener) {
         throw new Error("mailbox already has a listener");
       }
-      myself.listener = l;
-      if (myself.full && myself.listener) {
-        myself.listener.trigger(myself);
+      listener = newListener;
+      if (full && listener) {
+        listener.trigger(myself);
       }
-      return l;
+      return newListener;
     };
-    myself.put = function(message) {
-      if (myself.full) {
+    put = function(message) {
+      if (full) {
         return false;
       } else {
-        myself.contents = message;
-        myself.full = true;
-        if (myself.listener) {
-          myself.listener.trigger(myself);
+        contents = message;
+        full = true;
+        if (listener) {
+          listener.trigger(myself);
         }
         return true;
       }
     };
-    myself.get = function() {
+    get = function() {
       var c;
-      if (myself.full) {
-        c = myself.contents;
-        myself.contents = null;
-        myself.full = false;
+      if (full) {
+        c = contents;
+        contents = null;
+        full = false;
         return c;
       } else {
         return null;
       }
     };
-    return myself;
+    return myself = {
+      isFull: isFull,
+      setListener: setListener,
+      put: put,
+      get: get
+    };
   };
 
   module.exports = mailbox;

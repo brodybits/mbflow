@@ -17,7 +17,7 @@ In case I accept and include contributions in the future I will require a simila
 ## To test
 
 ```shell
-node index.js
+coffee simple-mailbox-test.coffee.md -n
 ```
 
 ## To regenerate Javascript
@@ -70,7 +70,7 @@ or
 coffee simple-mailbox-test.coffee.md --node
 ```
 
-# Simple HTTP server sample
+## Simple HTTP server sample
 
 See [http-server-test.coffee.md](http-server-test.coffee.md)
 
@@ -86,10 +86,17 @@ and attempt to access the http port using something like:
 curl http://localhost:8080/test-url
 ```
 
+## Coding notes
+
+- Using CoffeeScript for now since I find it easier for first-time development than Javascript (or at least ES3/ES5)
+- Using the simplest subset possible, i.e. no classes (which are sugar anyway), avoid `new` and `this` unless absolutely necessary. A couple links for reference:
+  - http://radar.oreilly.com/2014/03/javascript-without-the-this.html
+  - https://nemisj.com/js-without-new-and-this/
+- All components should be kept as simple as possible.
+
 ## Future TODO
 
-- Keep all components as simple as possible
-- Avoid using unnecessary language features such as classes
 - Simple components should be in Javascript instead
+- Try ES6 with simple `=>` function operator
 - Separate license file
 

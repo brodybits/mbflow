@@ -3,43 +3,49 @@
 ## mailbox object without 'new' or 'this' keywords
 
     mailbox = ->
+      # *declare* self:
+      myself = undefined
 
-      myself = {}
+      # private local variables:
+      full = false
+      contents = null
+      listener = null
 
-      myself.full = false
-      myself.contents = null
-      myself.listener = null
+      isFull = -> full
 
-      myself.isFull = -> myself.full
+      setListener = (newListener) ->
+        if !!newListener and !!listener then throw new Error "mailbox already has a listener"
 
-      myself.setListener = (l) ->
-        if !!l and !!myself.listener then throw new Error "mailbox already has a listener"
+        listener = newListener
 
-        myself.listener = l
+        if full and listener then listener.trigger myself
 
-        if myself.full and myself.listener then myself.listener.trigger myself
+        newListener
 
-        l
-
-      myself.put = (message) ->
-        if myself.full
+      put = (message) ->
+        if full
           false
         else
-          myself.contents = message
-          myself.full = true
-          if myself.listener then myself.listener.trigger myself
+          contents = message
+          full = true
+          if listener then listener.trigger myself
           true
 
-      myself.get = ->
-        if myself.full
-          c = myself.contents
-          myself.contents = null
-          myself.full = false
+      get = ->
+        if full
+          c = contents
+          contents = null
+          full = false
           c
         else
           null
 
-      return myself
+      # store and return my self reference:
+      myself =
+        isFull: isFull
+        setListener: setListener
+        put: put
+        get: get
 
 ## export
 
