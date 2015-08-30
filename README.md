@@ -24,14 +24,17 @@ node index.js
 
 ```shell
 coffee -p mailbox.coffee > mailbox.js
-coffee -p index.coffee > index.js
 ```
 
-NOTE: this is subject to change and may change in the near future. I think there better way to do this!
+or for more recent versions of the CoffeeScript compiler:
+
+```shell
+coffee -c mailbox.coffee.md
+```
 
 ## Simple mailbox flow sample
 
-See index.coffee:
+See [simple-mailbox-test.coffee.md](simple-mailbox-test.coffee.md):
 
 ```coffeescript
 mailbox = require './mailbox.js'
@@ -53,6 +56,18 @@ m1.setListener my_listener
 # put another message in the mailbox, which will immediately trigger the listener
 # to retrieve and process it:
 m1.put { c: 2, d: 'world' }
+```
+
+To run:
+
+```shell
+coffee simple-mailbox-test.coffee.md -n
+```
+
+or
+
+```shell
+coffee simple-mailbox-test.coffee.md --node
 ```
 
 # Simple HTTP server sample
