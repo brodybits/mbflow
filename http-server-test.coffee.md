@@ -6,6 +6,10 @@
 
     mailbox = require('./mailbox.js')
 
+#### Constants:
+
+    PORT = 8080
+
 #### HTTP-out mailbox:
 
     mb = mailbox()
@@ -15,11 +19,14 @@
     handleReq = (req, res) ->
       console.log 'Got request with url: ' + req.url
       mb.put
-        url: req.url
         req: req
         res: res
 
     srv = http.createServer handleReq
+
+    # BLOCKING:
+    runServer = ->
+      srv.listen PORT, -> console.log 'SERVER is listening'
 
 #### App HTTP handler
 
@@ -27,13 +34,13 @@
       trigger: (mb) ->
         m = mb.get()
         m.res.end 'Response from URL: ' + m.req.url + '\n'
+        return
 
     mb.setListener myListener
 
 #### Run the HTTP server
 
-    # NOTE: this must be done last since it will block:
-    srv.listen 8080, -> console.log 'SERVER is listening'
+    runServer()
 
 #### ref: http://blog.modulus.io/build-your-first-http-server-in-nodejs
 
