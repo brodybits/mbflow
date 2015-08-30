@@ -1,41 +1,45 @@
+# mailbox object
 
+#### mailbox object without 'new' or 'this' keywords
 
-class Mailbox
-  constructor: ->
-    @full = false
-    @contents = null
-    @listener = null
+    mailbox = ->
 
-  isFull: -> @full
+      myself = {}
 
-  setListener: (l) ->
-    if !!l and !!@listener then throw new Error "mailbox already has a listener"
+      myself.full = false
+      myself.contents = null
+      myself.listener = null
 
-    @listener = l
+      myself.isFull = -> myself.full
 
-    if @full and @listener then @listener.trigger @
+      myself.setListener = (l) ->
+        if !!l and !!myself.listener then throw new Error "mailbox already has a listener"
 
-    l
+        myself.listener = l
 
-  put: (message) ->
-    if @full
-      false
-    else
-      @contents = message
-      @full = true
-      if @listener then @listener.trigger @
-      true
+        if myself.full and myself.listener then myself.listener.trigger myself
 
-  get: ->
-    if @full
-      c = @contents
-      @contents = null
-      @full = false
-      c
-    else
-      null
+        l
 
-mailbox = -> new Mailbox
+      myself.put = (message) ->
+        if myself.full
+          false
+        else
+          myself.contents = message
+          myself.full = true
+          if myself.listener then myself.listener.trigger myself
+          true
 
-module.exports = mailbox
+      myself.get = ->
+        if myself.full
+          c = myself.contents
+          myself.contents = null
+          myself.full = false
+          c
+        else
+          null
+
+      return myself
+
+    module.exports = mailbox
 

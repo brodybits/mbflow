@@ -1,59 +1,49 @@
 (function() {
-  var Mailbox, mailbox;
+  var mailbox;
 
-  Mailbox = (function() {
-    function Mailbox() {
-      this.full = false;
-      this.contents = null;
-      this.listener = null;
-    }
-
-    Mailbox.prototype.isFull = function() {
-      return this.full;
+  mailbox = function() {
+    var myself;
+    myself = {};
+    myself.full = false;
+    myself.contents = null;
+    myself.listener = null;
+    myself.isFull = function() {
+      return myself.full;
     };
-
-    Mailbox.prototype.setListener = function(l) {
-      if (!!l && !!this.listener) {
+    myself.setListener = function(l) {
+      if (!!l && !!myself.listener) {
         throw new Error("mailbox already has a listener");
       }
-      this.listener = l;
-      if (this.full && this.listener) {
-        this.listener.trigger(this);
+      myself.listener = l;
+      if (myself.full && myself.listener) {
+        myself.listener.trigger(myself);
       }
       return l;
     };
-
-    Mailbox.prototype.put = function(message) {
-      if (this.full) {
+    myself.put = function(message) {
+      if (myself.full) {
         return false;
       } else {
-        this.contents = message;
-        this.full = true;
-        if (this.listener) {
-          this.listener.trigger(this);
+        myself.contents = message;
+        myself.full = true;
+        if (myself.listener) {
+          myself.listener.trigger(myself);
         }
         return true;
       }
     };
-
-    Mailbox.prototype.get = function() {
+    myself.get = function() {
       var c;
-      if (this.full) {
-        c = this.contents;
-        this.contents = null;
-        this.full = false;
+      if (myself.full) {
+        c = myself.contents;
+        myself.contents = null;
+        myself.full = false;
         return c;
       } else {
         return null;
       }
     };
-
-    return Mailbox;
-
-  })();
-
-  mailbox = function() {
-    return new Mailbox;
+    return myself;
   };
 
   module.exports = mailbox;
