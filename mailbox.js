@@ -13,11 +13,12 @@
     };
 
     Mailbox.prototype.setListener = function(l) {
+      if (!!l && !!this.listener) {
+        throw new Error("mailbox already has a listener");
+      }
       this.listener = l;
-      if (this.full) {
-        if (this.listener) {
-          this.listener.trigger(this);
-        }
+      if (this.full && this.listener) {
+        this.listener.trigger(this);
       }
       return l;
     };

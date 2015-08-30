@@ -9,10 +9,11 @@ class Mailbox
   isFull: -> @full
 
   setListener: (l) ->
+    if !!l and !!@listener then throw new Error "mailbox already has a listener"
+
     @listener = l
 
-    if @full
-      if @listener then @listener.trigger @
+    if @full and @listener then @listener.trigger @
 
     l
 
