@@ -29,7 +29,7 @@ coffee -p index.coffee > index.js
 
 NOTE: this is subject to change and may change in the near future. I think there better way to do this!
 
-## Sample
+## Simple mailbox flow sample
 
 See index.coffee:
 
@@ -54,6 +54,10 @@ m1.setListener my_listener
 # to retrieve and process it:
 m1.put { c: 2, d: 'world' }
 ```
+
+# Simple HTTP server sample
+
+See [http_server_test.coffee.md](http_server_test.coffee.md)
 
 ## Future TODO
 
