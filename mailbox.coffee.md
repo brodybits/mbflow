@@ -1,6 +1,6 @@
 # mailbox object
 
-#### mailbox object without 'new' or 'this' keywords
+## mailbox object without 'new' or 'this' keywords
 
     mailbox = ->
 
@@ -41,5 +41,9 @@
 
       return myself
 
+## export
+
     module.exports = mailbox
+
+#### vim: set ft=coffee :
 
