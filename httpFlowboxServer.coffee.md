@@ -9,7 +9,7 @@
 
 #### HTTP server function
 
-    httpServer = ->
+    httpFlowboxServer = ->
       # run trigger flow-box:
       run_trigger = flowbox()
 
@@ -45,7 +45,7 @@
 
 ## export
 
-    module.exports = httpServer
+    module.exports = httpFlowboxServer
 
 #### ref: http://blog.modulus.io/build-your-first-http-server-in-nodejs
 

@@ -2,14 +2,12 @@
 
 #### Import(s)
 
-    http = require('http')
-
     flowbox = require('./flowbox.js')
     outbox = require('./outbox.js')
 
-#### HTTP server function
+#### Log handler function
 
-    logHandler = ->
+    logFlowboxHandler = ->
       inbox = flowbox()
 
       logListener =
@@ -25,7 +23,7 @@
 
 ## export
 
-    module.exports = logHandler
+    module.exports = logFlowboxHandler
 
 #### vim: set ft=coffee :
 

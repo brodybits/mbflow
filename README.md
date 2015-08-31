@@ -95,12 +95,12 @@ coffee simple-flowbox-test.coffee.md --node
 
 ## Simple HTTP server sample
 
-See [http-server-test.coffee.md](http-server-test.coffee.md)
+See [http-flowbox-server-test.coffee.md](http-flowbox-server-test.coffee.md)
 
 To run:
 
 ```shell
-coffee http-server-test.coffee.md -n
+coffee http-flowbox-server-test.coffee.md -n
 ```
 
 and attempt to access the http port using something like:

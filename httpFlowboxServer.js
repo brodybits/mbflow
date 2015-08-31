@@ -1,5 +1,5 @@
 (function() {
-  var flowbox, http, httpServer, outbox;
+  var flowbox, http, httpFlowboxServer, outbox;
 
   http = require('http');
 
@@ -7,7 +7,7 @@
 
   outbox = require('./outbox.js');
 
-  httpServer = function() {
+  httpFlowboxServer = function() {
     var handleReq, http_out, log_out, mylog, runListener, run_trigger, srv;
     run_trigger = flowbox();
     http_out = outbox();
@@ -43,6 +43,6 @@
     };
   };
 
-  module.exports = httpServer;
+  module.exports = httpFlowboxServer;
 
 }).call(this);

@@ -1,13 +1,11 @@
 (function() {
-  var flowbox, http, logHandler, outbox;
-
-  http = require('http');
+  var flowbox, logFlowboxHandler, outbox;
 
   flowbox = require('./flowbox.js');
 
   outbox = require('./outbox.js');
 
-  logHandler = function() {
+  logFlowboxHandler = function() {
     var inbox, logListener;
     inbox = flowbox();
     logListener = {
@@ -23,6 +21,6 @@
     };
   };
 
-  module.exports = logHandler;
+  module.exports = logFlowboxHandler;
 
 }).call(this);

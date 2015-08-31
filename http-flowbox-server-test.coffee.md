@@ -2,8 +2,8 @@
 
 #### Import(s)
 
-    httpServer = require('./httpServer.js')
-    logHandler = require('./logHandler.js')
+    httpFlowboxServer = require('./httpFlowboxServer.js')
+    logFlowboxHandler = require('./logFlowboxHandler.js')
 
     flowbox = require('./flowbox.js')
 
@@ -13,7 +13,7 @@
 
 #### HTTP server instance
 
-    mysrv = httpServer()
+    mysrv = httpFlowboxServer()
 
 #### App HTTP handler
 
@@ -31,7 +31,7 @@
 
 #### App Log handler
 
-    log_handler = logHandler()
+    log_handler = logFlowboxHandler()
 
     mysrv.log_out.setRecipient log_handler.inbox
 
