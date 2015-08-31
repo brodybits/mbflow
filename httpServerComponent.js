@@ -1,17 +1,15 @@
 (function() {
-  var flowbox, http, httpFlowboxServer, outbox;
+  var component, http, httpServerComponent;
 
   http = require('http');
 
-  flowbox = require('./flowbox.js');
+  component = require('./component.js');
 
-  outbox = require('./outbox.js');
-
-  httpFlowboxServer = function() {
+  httpServerComponent = component(function(context) {
     var handleReq, http_out, log_out, mylog, runListener, run_trigger, srv;
-    run_trigger = flowbox();
-    http_out = outbox();
-    log_out = outbox();
+    run_trigger = context.inbox('run_trigger');
+    http_out = context.outbox('http_out');
+    log_out = context.outbox('log_out');
     mylog = function(s) {
       if (!log_out.isBlocked()) {
         return log_out.post(s);
@@ -36,13 +34,8 @@
       }
     };
     run_trigger.setListener(runListener);
-    return {
-      run_trigger: run_trigger,
-      http_out: http_out,
-      log_out: log_out
-    };
-  };
+  });
 
-  module.exports = httpFlowboxServer;
+  module.exports = httpServerComponent;
 
 }).call(this);

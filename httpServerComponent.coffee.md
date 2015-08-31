@@ -1,21 +1,20 @@
-# HTTP server object (without 'new' or 'this' keywords)
+# HTTP server component object (without 'new' or 'this' keywords)
 
 #### Import(s)
 
     http = require('http')
 
-    flowbox = require('./flowbox.js')
-    outbox = require('./outbox.js')
+    component = require('./component.js')
 
 #### HTTP server function
 
-    httpFlowboxServer = ->
+    httpServerComponent = component (context) ->
       # run trigger flow-box:
-      run_trigger = flowbox()
+      run_trigger = context.inbox('run_trigger')
 
       # output flow mailboxes:
-      http_out = outbox()
-      log_out = outbox()
+      http_out = context.outbox('http_out')
+      log_out = context.outbox('log_out')
 
       # internal helper function(s):
       mylog = (s) -> if !log_out.isBlocked() then log_out.post s
@@ -39,13 +38,14 @@
       run_trigger.setListener runListener
 
       # returns:
-      run_trigger: run_trigger
-      http_out: http_out
-      log_out: log_out
+      #run_trigger: run_trigger
+      #http_out: http_out
+      #log_out: log_out
+      return
 
 ## export
 
-    module.exports = httpFlowboxServer
+    module.exports = httpServerComponent
 
 #### ref: http://blog.modulus.io/build-your-first-http-server-in-nodejs
 
