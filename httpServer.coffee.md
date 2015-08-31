@@ -5,6 +5,7 @@
     http = require('http')
 
     flowbox = require('./flowbox.js')
+    outbox = require('./outbox.js')
 
 #### HTTP server function
 
@@ -13,8 +14,8 @@
       run_trigger = flowbox()
 
       # output flow mailboxes:
-      http_out = flowbox()
-      log_out = flowbox()
+      http_out = outbox()
+      log_out = outbox()
 
       # internal helper function(s):
       mylog = (s) -> if !log_out.isBlocked() then log_out.post s

@@ -1,15 +1,17 @@
 (function() {
-  var flowbox, http, httpServer;
+  var flowbox, http, httpServer, outbox;
 
   http = require('http');
 
   flowbox = require('./flowbox.js');
 
+  outbox = require('./outbox.js');
+
   httpServer = function() {
     var handleReq, http_out, log_out, mylog, runListener, run_trigger, srv;
     run_trigger = flowbox();
-    http_out = flowbox();
-    log_out = flowbox();
+    http_out = outbox();
+    log_out = outbox();
     mylog = function(s) {
       if (!log_out.isBlocked()) {
         return log_out.post(s);

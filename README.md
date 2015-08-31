@@ -29,6 +29,8 @@ will be able to handle the message and send it on.
 
 So the message flow mailbox, called a "flowbox" here, acts to provide both data flow control and program execution flow control.
 
+There is also an "outbox" object, that can be part of one component and connected to an input "flowbox" on another component.
+
 In the future, there will be higher-level component flow and program assembly APIs to make this library easier to use.
 
 This project takes its inspiration from the following projects:
