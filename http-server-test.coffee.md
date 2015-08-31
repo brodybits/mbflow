@@ -1,39 +1,8 @@
 # HTTP server test
 
-#### Imports
+#### Import(s)
 
-    http = require('http')
-
-    mailbox = require('./mailbox.js')
-
-#### Constants:
-
-    PORT = 8080
-
-#### HTTP server function
-
-    httpServer = ->
-      http_out = mailbox()
-      log_out = mailbox()
-
-      mylog = (s) -> if !log_out.isBlocked() then log_out.put s
-
-      handleReq = (req, res) ->
-        mylog 'Got request with url: ' + req.url
-        http_out.put
-          req: req
-          res: res
-
-      srv = http.createServer handleReq
-
-      # BLOCKING:
-      runServer = ->
-        srv.listen PORT, -> mylog 'SERVER is listening'
-
-      # return
-      http_out: http_out
-      log_out: log_out
-      runServer: runServer
+    httpServer = require('./httpServer.js')
 
 #### HTTP server instance
 
@@ -62,8 +31,6 @@
 #### Run the HTTP server
 
     mysrv.runServer()
-
-#### ref: http://blog.modulus.io/build-your-first-http-server-in-nodejs
 
 #### vim: set ft=coffee :
 
