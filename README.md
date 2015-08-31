@@ -95,12 +95,12 @@ coffee simple-flowbox-test.coffee.md --node
 
 ## Simple HTTP server sample
 
-See [http-flowbox-server-test.coffee.md](http-flowbox-server-test.coffee.md)
+See [http-flowbox-server-test.js](http-flowbox-server-test.js)
 
 To run:
 
 ```shell
-coffee -p http-flowbox-server-test.coffee.md | node --harmony
+node --harmony http-flowbox-server-test.js
 ```
 
 and attempt to access the http port using something like:
@@ -109,10 +109,76 @@ and attempt to access the http port using something like:
 curl http://localhost:8080/test-url
 ```
 
+Here is the top-level Javascript:
+
+```Javascript
+// -----------------------------------------------------------------------------
+// HTTP flowbox server test
+
+// Import(s):
+
+var httpFlowboxServer = require('./httpFlowboxServer.js');
+var httpTestFlowboxHandler = require('./httpTestFlowboxHandler.es6.js');
+var logFlowboxHandler = require('./logFlowboxHandler.js');
+
+var flowbox = require('./flowbox.js');
+
+// Constant(s):
+
+var PORT = 8080;
+
+// HTTP server instance
+
+var mysrv = httpFlowboxServer();
+
+// App HTTP handler
+
+var http_handler = httpTestFlowboxHandler();
+
+mysrv.http_out.setRecipient(http_handler.inbox);
+
+// App Log handler
+
+var log_handler = logFlowboxHandler();
+
+mysrv.log_out.setRecipient(log_handler.inbox);
+
+// Run the HTTP server
+
+mysrv.run_trigger.post({ port: PORT });
+```
+
+and the test HTTP handler in ES6:
+
+```Javascript
+var flowbox = require('./flowbox.js');
+
+var httpTestFlowboxHandler = () => {
+  var inbox = flowbox();
+
+  var myListener = {
+    onPost: (mb) => {
+      var m = mb.get();
+      m.res.end('Response from URL: ' + m.req.url + '\n');
+    }
+  };
+
+  inbox.setListener(myListener);
+
+  return {
+    inbox: inbox
+  };
+};
+
+module.exports = httpTestFlowboxHandler;
+```
+
+Note that I am using ES6 *only* to get the new `=>` function operator. Otherwise it should be the same as ES5 (or maybe even ES3).
+
 ## Coding notes
 
-- Using CoffeeScript for now since I find it easier for first-time development than Javascript (or at least ES3/ES5)
-- Using the simplest subset possible, i.e. no classes (which are sugar anyway), avoid `new` and `this` unless absolutely necessary. A couple links for reference:
+- Using CoffeeScript that is compiled to Javascript (ES3/ES5) for all library classes
+- Using the simplest subset possible, i.e. no classes (which are sugar anyway), avoid `new` and `this` (unless absolutely necessary someday). Here are a couple of links for reference:
   - http://radar.oreilly.com/2014/03/javascript-without-the-this.html
   - https://nemisj.com/js-without-new-and-this/
 - All components should be kept as simple as possible.
@@ -120,6 +186,6 @@ curl http://localhost:8080/test-url
 ## Future TODO
 
 - Simple components should be in Javascript instead
-- Try ES6 with simple `=>` function operator
+- Consider replacing _all_ CoffeeScript with ES6 which can be transpiled to ES3/ES5
 - Separate license file
 
