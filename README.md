@@ -60,23 +60,23 @@ See [simple-flowbox-test.coffee.md](simple-flowbox-test.coffee.md):
 ```coffeescript
 flowbox = require './flowbox.js'
 
-m1 = flowbox()
+mybox = flowbox()
 
 # message stays in the mailbox since there is no listener:
-m1.put { a: 1, b: 'hello' }
+mybox.put { a: 1, b: 'hello' }
 
 # dumb, simple listener
-my_listener =
-  trigger: (m) ->
-    mc = m1.get()
+myListener =
+  onPost: (box) ->
+    mc = box.get()
     console.log 'got message with contents: ' + JSON.stringify mc
 
 # this will immediately trigger the listener to retrieve and process the mailbox contents:
-m1.setListener my_listener
+mybox.setListener myListener
 
 # put another message in the mailbox, which will immediately trigger the listener
 # to retrieve and process it:
-m1.put { c: 2, d: 'world' }
+mybox.put { c: 2, d: 'world' }
 ```
 
 To run:

@@ -2,18 +2,21 @@
 
     flowbox = require './flowbox.js'
 
-    m1 = flowbox()
+    mybox = flowbox()
 
-    m1.post { a: 1, b: 'hello' }
+    # will be blocked:
+    mybox.post { a: 1, b: 'hello' }
 
-    l1 =
-      trigger: (m) ->
-        mc = m1.get()
+    myListener =
+      onPost: (box) ->
+        mc = box.get()
         console.log 'got message with contents: ' + JSON.stringify mc
 
-    m1.setListener l1
+    # will immediately handle the blocked post:
+    mybox.setListener myListener
 
-    m1.post { c: 2, d: 'world' }
+    # post another message:
+    mybox.post { c: 2, d: 'world' }
 
 #### vim: set ft=coffee:
 

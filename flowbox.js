@@ -22,18 +22,18 @@
       }
       listener = newListener;
       if (full && listener) {
-        listener.trigger(myself);
+        listener.onPost(myself);
       }
       return newListener;
     };
     post = function(message) {
       if (full) {
-        throw new Error('Cannot post: flowbox is already full');
+        throw new Error('Cannot post: this flowbox is already full');
       }
       contents = message;
       full = true;
       if (listener) {
-        listener.trigger(myself);
+        listener.onPost(myself);
       }
     };
     get = function() {

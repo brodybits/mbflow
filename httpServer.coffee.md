@@ -29,7 +29,7 @@
 
       # add listen function:
       runListener =
-        trigger: (mb) ->
+        onPost: (mb) ->
           opt = mb.get()
           myport = opt.port
           srv.listen myport, ->

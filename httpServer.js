@@ -24,7 +24,7 @@
     };
     srv = http.createServer(handleReq);
     runListener = {
-      trigger: function(mb) {
+      onPost: function(mb) {
         var myport, opt;
         opt = mb.get();
         myport = opt.port;

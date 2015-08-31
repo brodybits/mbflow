@@ -15,7 +15,7 @@
 #### App HTTP handler
 
     myListener =
-      trigger: (mb) ->
+      onPost: (mb) ->
         m = mb.get()
         m.res.end 'Response from URL: ' + m.req.url + '\n'
         return
@@ -25,7 +25,7 @@
 #### App Log handler
 
     logListener =
-      trigger: (mb) ->
+      onPost: (mb) ->
         s = mb.get()
         console.log s
         return

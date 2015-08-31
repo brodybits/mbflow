@@ -24,15 +24,15 @@
 
         listener = newListener
 
-        if full and listener then listener.trigger myself
+        if full and listener then listener.onPost myself
 
         newListener
 
       post = (message) ->
-        if full then throw new Error 'Cannot post: flowbox is already full'
+        if full then throw new Error 'Cannot post: this flowbox is already full'
         contents = message
         full = true
-        if listener then listener.trigger myself
+        if listener then listener.onPost myself
         return
 
       get = ->
