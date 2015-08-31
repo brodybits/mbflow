@@ -114,59 +114,47 @@ Here is the top-level Javascript:
 
 ```Javascript
 // -----------------------------------------------------------------------------
-// HTTP server test
+// HTTP server component test
 
 // Import(s):
-
 var httpServerComponent = require('./httpServerComponent.js');
-var httpTestFlowboxHandler = require('./httpTestFlowboxHandler.es6.js');
-var logFlowboxHandler = require('./logFlowboxHandler.js');
+var httpTestHandlerComponent = require('./httpTestHandlerComponent.es6.js');
+var consoleLogComponent = require('./consoleLogComponent.js');
 
 // Constant(s):
-
 var PORT = 8080;
 
-// HTTP server instance
+// Components:
 var mysrv = httpServerComponent();
-
-// App HTTP handler
-var http_handler = httpTestFlowboxHandler();
-
-// App Log handler
-var log_handler = logFlowboxHandler();
+var http_handler = httpTestHandlerComponent();
+var log_handler = consoleLogComponent();
 
 // Hook it up:
 mysrv.http_out.setRecipient(http_handler.inbox);
 mysrv.log_out.setRecipient(log_handler.inbox);
 
 // Run the HTTP server
-
 mysrv.run_trigger.post({ port: PORT });
 ```
 
-and the test HTTP handler in ES6 (which will be converted to a true component):
+and the test HTTP handler component in ES6:
 
 ```Javascript
-var flowbox = require('./flowbox.js');
+var component = require('./component.js');
 
-var httpTestFlowboxHandler = () => {
-  var inbox = flowbox();
+var httpTestHandlerComponent = component((context) => {
+  var inbox = context.inbox('inbox');
 
-  var myListener = {
+  inbox.setListener({
     onPost: (mb) => {
       var m = mb.get();
       m.res.end('Response from URL: ' + m.req.url + '\n');
     }
-  };
+  });
 
-  inbox.setListener(myListener);
+});
 
-  return {
-    inbox: inbox
-  };
-};
-
-module.exports = httpTestFlowboxHandler;
+module.exports = httpTestHandlerComponent;
 ```
 
 Note that I am using ES6 *only* to get the new `=>` function operator. Otherwise it should be the same as ES5 (or maybe even ES3).

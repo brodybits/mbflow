@@ -35,12 +35,9 @@
           srv.listen myport, ->
             mylog 'SERVER is listening to port: ' + myport
           return
+
       run_trigger.setListener runListener
 
-      # returns:
-      #run_trigger: run_trigger
-      #http_out: http_out
-      #log_out: log_out
       return
 
 ## export
