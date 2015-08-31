@@ -1,9 +1,6 @@
 # Mailbox flow system
 
-Simple message [Flow-based programming (fbp)](http://www.jpaulmorrison.com/fbp/) system based on simple mailboxes, for Node.JS and other CommonJS implementations
-
-Intended to be used to build a simple CoffeeScript/Javascript FBP implementation that can be used in both server and browser,
-without any new features such as "Fibers" (which will not work on browsers) or generators.
+Simple flow-based ES3/ES5/ES6 (Javascript) execution system based on simple mailboxes, based on the [Flow-based programming (fbp)](http://www.jpaulmorrison.com/fbp/) concept, for Node.JS and other CommonJS implementations. Does not need any new features such as "Fibers" (which will not work on browsers), generators, etc.
 
 by Christopher J. Brody mailto: info@litehelpers.net
 
@@ -31,8 +28,14 @@ So the message flow mailbox, called a "flowbox" here, acts to provide both data 
 
 There is also an "outbox" object, that can be part of one component and connected to an input "flowbox" on another component.
 
-There is now a "component" class that can be used to define components, and keep track of its input and output flow boxes.
+There is now a "component" object that can be used to define components, and keep track of its input and output flow boxes.
 It will support higher-level component flow and program assembly APIs to make this library easier to use.
+The component object now supports a virtual loop functionality, as shown in the sample HTTP server code below.
+
+The virtual loop will execute its function once every time a message is posted into an inbox of the component.
+FUTURE TBD/TODO:
+- If there is a pending message in an inbox and a downstream inbox is cleared, the virtual loop function should be triggered
+- The virtual loop function _should_ check the outbox before posting a message. More elegant solutions would include blocking the message processing when any or all outboxes are full and perhaps support for limited queueing.
 
 This project takes its inspiration from the following projects:
 - [Flow-based programming (fbp)](http://www.jpaulmorrison.com/fbp/) which has its own user group as well as some reference implementations at: http://www.jpaulmorrison.com/fbp/software.html
@@ -145,14 +148,28 @@ var component = require('./component.js');
 var httpTestHandlerComponent = component((context) => {
   var inbox = context.inbox('inbox');
 
+  context.runVirtualLoop((mycontext) => {
+    var m = inbox.get();
+    m.res.end('Response from URL: ' + m.req.url + '\n');
+  });
+
+});
+
+module.exports = httpTestHandlerComponent;
+```
+
+Alternative (TBD may go away):
+
+```Javascript
+var component = require('./component.js');
+
+var httpTestHandlerComponent = component((context) => {
   inbox.setListener({
     onPost: (mb) => {
       var m = mb.get();
       m.res.end('Response from URL: ' + m.req.url + '\n');
     }
   });
-
-});
 
 module.exports = httpTestHandlerComponent;
 ```
