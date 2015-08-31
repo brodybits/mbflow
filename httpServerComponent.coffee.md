@@ -27,18 +27,12 @@
 
       srv = http.createServer handleReq
 
-      # add listen function:
-      runListener =
-        onPost: (mb) ->
-          opt = mb.get()
-          myport = opt.port
-          srv.listen myport, ->
-            mylog 'SERVER is listening to port: ' + myport
-          return
+      context.runVirtualLoop (context) ->
+        opt = run_trigger.get()
+        myport = opt.port
+        srv.listen myport, ->
+          mylog 'SERVER is listening to port: ' + myport
 
-      run_trigger.setListener runListener
-
-      return
 
 ## export
 

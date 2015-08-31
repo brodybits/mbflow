@@ -9,15 +9,10 @@
     consoleLogComponent = component (context) ->
       inbox = context.inbox('inbox')
 
-      consoleLogListener =
-        onPost: (mb) ->
-          s = mb.get()
-          console.log s
-          return
-
-      inbox.setListener consoleLogListener
-
-      return
+      context.runVirtualLoop (context) ->
+        s = inbox.get()
+        console.log s
+        return
 
 ## export
 
