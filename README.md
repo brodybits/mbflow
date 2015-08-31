@@ -100,7 +100,7 @@ See [http-flowbox-server-test.coffee.md](http-flowbox-server-test.coffee.md)
 To run:
 
 ```shell
-coffee http-flowbox-server-test.coffee.md -n
+coffee -p http-flowbox-server-test.coffee.md | node --harmony
 ```
 
 and attempt to access the http port using something like:

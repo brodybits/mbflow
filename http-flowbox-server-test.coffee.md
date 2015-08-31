@@ -3,6 +3,7 @@
 #### Import(s)
 
     httpFlowboxServer = require('./httpFlowboxServer.js')
+    httpTestFlowboxHandler = require('./httpTestFlowboxHandler.es6.js')
     logFlowboxHandler = require('./logFlowboxHandler.js')
 
     flowbox = require('./flowbox.js')
@@ -17,17 +18,9 @@
 
 #### App HTTP handler
 
-    my_inbox = flowbox()
+    http_handler = httpTestFlowboxHandler()
 
-    myListener =
-      onPost: (mb) ->
-        m = mb.get()
-        m.res.end 'Response from URL: ' + m.req.url + '\n'
-        return
-
-    my_inbox.setListener myListener
-
-    mysrv.http_out.setRecipient my_inbox
+    mysrv.http_out.setRecipient http_handler.inbox
 
 #### App Log handler
 
