@@ -1,14 +1,13 @@
 (function() {
-  var PORT, http, httpServer, mailbox;
+  var http, httpServer, mailbox;
 
   http = require('http');
 
   mailbox = require('./mailbox.js');
 
-  PORT = 8080;
-
   httpServer = function() {
-    var handleReq, http_out, log_out, mylog, runServer, srv;
+    var handleReq, http_out, log_out, mylog, runListener, run_trigger, srv;
+    run_trigger = mailbox();
     http_out = mailbox();
     log_out = mailbox();
     mylog = function(s) {
@@ -24,15 +23,20 @@
       });
     };
     srv = http.createServer(handleReq);
-    runServer = function() {
-      return srv.listen(PORT, function() {
-        return mylog('SERVER is listening');
-      });
+    runListener = {
+      trigger: function(mb) {
+        var myport;
+        myport = mb.get();
+        srv.listen(myport, function() {
+          return mylog('SERVER is listening');
+        });
+      }
     };
+    run_trigger.setListener(runListener);
     return {
+      run_trigger: run_trigger,
       http_out: http_out,
-      log_out: log_out,
-      runServer: runServer
+      log_out: log_out
     };
   };
 

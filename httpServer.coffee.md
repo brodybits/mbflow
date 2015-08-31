@@ -6,13 +6,12 @@
 
     mailbox = require('./mailbox.js')
 
-#### Constants:
-
-    PORT = 8080
-
 #### HTTP server function
 
     httpServer = ->
+      # run trigger mailbox:
+      run_trigger = mailbox()
+
       # output mailboxes:
       http_out = mailbox()
       log_out = mailbox()
@@ -28,14 +27,18 @@
 
       srv = http.createServer handleReq
 
-      # BLOCKING listen function:
-      runServer = ->
-        srv.listen PORT, -> mylog 'SERVER is listening'
+      # add listen function:
+      runListener =
+        trigger: (mb) ->
+          myport = mb.get()
+          srv.listen myport, -> mylog 'SERVER is listening'
+          return
+      run_trigger.setListener runListener
 
       # returns:
+      run_trigger: run_trigger
       http_out: http_out
       log_out: log_out
-      runServer: runServer
 
 ## export
 

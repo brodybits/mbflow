@@ -4,6 +4,10 @@
 
     httpServer = require('./httpServer.js')
 
+#### Constant(s):
+
+    PORT = 8080
+
 #### HTTP server instance
 
     mysrv = httpServer()
@@ -30,7 +34,7 @@
 
 #### Run the HTTP server
 
-    mysrv.runServer()
+    mysrv.run_trigger.put PORT
 
 #### vim: set ft=coffee :
 
