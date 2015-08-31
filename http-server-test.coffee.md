@@ -34,7 +34,7 @@
 
 #### Run the HTTP server
 
-    mysrv.run_trigger.put PORT
+    mysrv.run_trigger.post { port: PORT }
 
 #### vim: set ft=coffee :
 

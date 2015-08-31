@@ -17,11 +17,11 @@
       log_out = flowbox()
 
       # internal helper function(s):
-      mylog = (s) -> if !log_out.isBlocked() then log_out.put s
+      mylog = (s) -> if !log_out.isBlocked() then log_out.post s
 
       handleReq = (req, res) ->
         mylog 'Got request with url: ' + req.url
-        http_out.put
+        http_out.post
           req: req
           res: res
 
@@ -30,8 +30,10 @@
       # add listen function:
       runListener =
         trigger: (mb) ->
-          myport = mb.get()
-          srv.listen myport, -> mylog 'SERVER is listening'
+          opt = mb.get()
+          myport = opt.port
+          srv.listen myport, ->
+            mylog 'SERVER is listening to port: ' + myport
           return
       run_trigger.setListener runListener
 

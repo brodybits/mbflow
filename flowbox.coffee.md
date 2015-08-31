@@ -28,8 +28,8 @@
 
         newListener
 
-      put = (message) ->
-        if full then throw new Error 'Cannot put: flowbox is already full'
+      post = (message) ->
+        if full then throw new Error 'Cannot post: flowbox is already full'
         contents = message
         full = true
         if listener then listener.trigger myself
@@ -50,7 +50,7 @@
         hasListener: hasListener
         isBlocked: isBlocked
         setListener: setListener
-        put: put
+        post: post
         get: get
 
 ## export

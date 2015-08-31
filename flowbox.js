@@ -2,7 +2,7 @@
   var flowbox;
 
   flowbox = function() {
-    var contents, full, get, hasListener, isBlocked, isFull, listener, myself, put, setListener;
+    var contents, full, get, hasListener, isBlocked, isFull, listener, myself, post, setListener;
     myself = void 0;
     full = false;
     contents = null;
@@ -26,9 +26,9 @@
       }
       return newListener;
     };
-    put = function(message) {
+    post = function(message) {
       if (full) {
-        throw new Error('Cannot put: flowbox is already full');
+        throw new Error('Cannot post: flowbox is already full');
       }
       contents = message;
       full = true;
@@ -52,7 +52,7 @@
       hasListener: hasListener,
       isBlocked: isBlocked,
       setListener: setListener,
-      put: put,
+      post: post,
       get: get
     };
   };

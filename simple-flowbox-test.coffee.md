@@ -4,7 +4,7 @@
 
     m1 = flowbox()
 
-    m1.put { a: 1, b: 'hello' }
+    m1.post { a: 1, b: 'hello' }
 
     l1 =
       trigger: (m) ->
@@ -13,7 +13,7 @@
 
     m1.setListener l1
 
-    m1.put { c: 2, d: 'world' }
+    m1.post { c: 2, d: 'world' }
 
 #### vim: set ft=coffee:
 

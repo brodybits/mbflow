@@ -23,7 +23,7 @@ connected and the listener _may_ get and consume the message from the message fl
 components or within existing components.
 
 Certain Node.js functions, such as http server listen(), will block the main program flow. In this case, the main program can
-put (or post?) a control command into the server object and it will block while the server object is listening. Whenever the
+post a control command into the server object and it will block while the server object is listening. Whenever the
 server function send calls a server object callback, and the callback posts the message into a mailbox, the listener
 will be able to handle the message and send it on.
 
