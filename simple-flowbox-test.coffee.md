@@ -1,8 +1,8 @@
-# Simple mailbox test
+# Simple flowbox test
 
-    mailbox = require './mailbox.js'
+    flowbox = require './flowbox.js'
 
-    m1 = mailbox()
+    m1 = flowbox()
 
     m1.put { a: 1, b: 'hello' }
 

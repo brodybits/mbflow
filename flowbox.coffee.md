@@ -1,8 +1,10 @@
-# mailbox object
+# flowbox object
 
-## mailbox object without 'new' or 'this' keywords
+## Handles both message flow and program control flow
 
-    mailbox = ->
+## flowbox object without 'new' or 'this' keywords
+
+    flowbox = ->
       # *declare* self:
       myself = undefined
 
@@ -13,13 +15,12 @@
 
       isFull = -> full
 
-      # FUTURE TBD:
-      #hasListener = -> !!listener
+      hasListener = -> !!listener
 
       isBlocked = -> full or !listener
 
       setListener = (newListener) ->
-        if !!newListener and !!listener then throw new Error "mailbox already has a listener"
+        if !!newListener and !!listener then throw new Error "flowbox already has a listener"
 
         listener = newListener
 
@@ -28,7 +29,7 @@
         newListener
 
       put = (message) ->
-        if full then throw new Error 'Cannot put: mail-box is already full'
+        if full then throw new Error 'Cannot put: flowbox is already full'
         contents = message
         full = true
         if listener then listener.trigger myself
@@ -46,6 +47,7 @@
       # store and return my self reference:
       myself =
         isFull: isFull
+        hasListener: hasListener
         isBlocked: isBlocked
         setListener: setListener
         put: put
@@ -53,7 +55,7 @@
 
 ## export
 
-    module.exports = mailbox
+    module.exports = flowbox
 
 #### vim: set ft=coffee :
 

@@ -1,8 +1,8 @@
 (function() {
-  var mailbox;
+  var flowbox;
 
-  mailbox = function() {
-    var contents, full, get, isBlocked, isFull, listener, myself, put, setListener;
+  flowbox = function() {
+    var contents, full, get, hasListener, isBlocked, isFull, listener, myself, put, setListener;
     myself = void 0;
     full = false;
     contents = null;
@@ -10,12 +10,15 @@
     isFull = function() {
       return full;
     };
+    hasListener = function() {
+      return !!listener;
+    };
     isBlocked = function() {
       return full || !listener;
     };
     setListener = function(newListener) {
       if (!!newListener && !!listener) {
-        throw new Error("mailbox already has a listener");
+        throw new Error("flowbox already has a listener");
       }
       listener = newListener;
       if (full && listener) {
@@ -25,7 +28,7 @@
     };
     put = function(message) {
       if (full) {
-        throw new Error('Cannot put: mail-box is already full');
+        throw new Error('Cannot put: flowbox is already full');
       }
       contents = message;
       full = true;
@@ -46,6 +49,7 @@
     };
     return myself = {
       isFull: isFull,
+      hasListener: hasListener,
       isBlocked: isBlocked,
       setListener: setListener,
       put: put,
@@ -53,6 +57,6 @@
     };
   };
 
-  module.exports = mailbox;
+  module.exports = flowbox;
 
 }).call(this);

@@ -4,17 +4,17 @@
 
     http = require('http')
 
-    mailbox = require('./mailbox.js')
+    flowbox = require('./flowbox.js')
 
 #### HTTP server function
 
     httpServer = ->
-      # run trigger mailbox:
-      run_trigger = mailbox()
+      # run trigger flow-box:
+      run_trigger = flowbox()
 
-      # output mailboxes:
-      http_out = mailbox()
-      log_out = mailbox()
+      # output flow mailboxes:
+      http_out = flowbox()
+      log_out = flowbox()
 
       # internal helper function(s):
       mylog = (s) -> if !log_out.isBlocked() then log_out.put s

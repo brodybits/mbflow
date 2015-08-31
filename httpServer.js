@@ -1,15 +1,15 @@
 (function() {
-  var http, httpServer, mailbox;
+  var flowbox, http, httpServer;
 
   http = require('http');
 
-  mailbox = require('./mailbox.js');
+  flowbox = require('./flowbox.js');
 
   httpServer = function() {
     var handleReq, http_out, log_out, mylog, runListener, run_trigger, srv;
-    run_trigger = mailbox();
-    http_out = mailbox();
-    log_out = mailbox();
+    run_trigger = flowbox();
+    http_out = flowbox();
+    log_out = flowbox();
     mylog = function(s) {
       if (!log_out.isBlocked()) {
         return log_out.put(s);
