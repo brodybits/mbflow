@@ -10,24 +10,34 @@
 
     PORT = 8080
 
-#### HTTP server
+#### HTTP server function
 
-    http_out = mailbox()
-    log_out = mailbox()
+    httpServer = ->
+      http_out = mailbox()
+      log_out = mailbox()
 
-    mylog = (s) -> if !log_out.isBlocked() then log_out.put s
+      mylog = (s) -> if !log_out.isBlocked() then log_out.put s
 
-    handleReq = (req, res) ->
-      mylog 'Got request with url: ' + req.url
-      http_out.put
-        req: req
-        res: res
+      handleReq = (req, res) ->
+        mylog 'Got request with url: ' + req.url
+        http_out.put
+          req: req
+          res: res
 
-    srv = http.createServer handleReq
+      srv = http.createServer handleReq
 
-    # BLOCKING:
-    runServer = ->
-      srv.listen PORT, -> mylog 'SERVER is listening'
+      # BLOCKING:
+      runServer = ->
+        srv.listen PORT, -> mylog 'SERVER is listening'
+
+      # return
+      http_out: http_out
+      log_out: log_out
+      runServer: runServer
+
+#### HTTP server instance
+
+    mysrv = httpServer()
 
 #### App HTTP handler
 
@@ -37,22 +47,21 @@
         m.res.end 'Response from URL: ' + m.req.url + '\n'
         return
 
-    http_out.setListener myListener
+    mysrv.http_out.setListener myListener
 
 #### App Log handler
 
     logListener =
       trigger: (mb) ->
-        console.log 'logListener got trigger'
         s = mb.get()
         console.log s
         return
 
-    log_out.setListener logListener
+    mysrv.log_out.setListener logListener
 
 #### Run the HTTP server
 
-    runServer()
+    mysrv.runServer()
 
 #### ref: http://blog.modulus.io/build-your-first-http-server-in-nodejs
 
