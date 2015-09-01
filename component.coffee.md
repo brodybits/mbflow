@@ -11,21 +11,23 @@
     component = (fun) ->
 
       ->
-        # FUTURE TBD may (or may not) separate inboxes/outboxes
-        flowboxes = {}
+        myself = {}
 
-        # needed for virtual loop feature:
+        inbox_map = {}
+        inbox_names = []
         inboxes = []
 
         get_inbox = (name) ->
           inbox = flowbox()
-          flowboxes[name] = inbox
+          myself[name] = inbox
+          inbox_map[name] = inbox
+          inbox_names.push name
           inboxes.push inbox
           inbox
 
         get_outbox = (name) ->
           my_outbox = outbox()
-          flowboxes[name] = my_outbox
+          myself[name] = my_outbox
           my_outbox
 
         context = null # will fill below
@@ -47,8 +49,14 @@
 
         fun context
 
-        # expose inboxes/outboxes
-        flowboxes
+        myself.withInputs = (connections) ->
+          for name in inbox_names
+            if !!connections[name]
+              connections[name].setRecipient inbox_map[name]
+
+          return myself
+
+        return myself
 
 ## export
 

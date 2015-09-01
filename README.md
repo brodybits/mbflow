@@ -134,15 +134,12 @@ var httpTestHandlerComponent2 = require('./httpTestHandlerComponent2.es6.js');
 var PORT1 = 8000;
 var PORT2 = 8080;
 
-// Components:
+// Connected components:
 var mysrv = httpServerComponent();
-var mysrv2 = httpServerComponent();
-var http_handler = httpTestHandlerComponent();
-var http_handler2 = httpTestHandlerComponent2();
+var http_handler = httpTestHandlerComponent().withInputs({inbox: mysrv.http_out});
 
-// Hook them up:
-mysrv.http_out.setRecipient(http_handler.inbox);
-mysrv2.http_out.setRecipient(http_handler2.inbox);
+var mysrv2 = httpServerComponent();
+var http_handler = httpTestHandlerComponent().withInputs({inbox: mysrv2.http_out});
 
 // Listen to the HTTP server ports:
 mysrv.listen_port_inbox.post({ port: PORT1 });

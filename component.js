@@ -7,20 +7,24 @@
 
   component = function(fun) {
     return function() {
-      var context, flowboxes, get_inbox, get_outbox, inboxes, run_virtual_loop;
-      flowboxes = {};
+      var context, get_inbox, get_outbox, inbox_map, inbox_names, inboxes, myself, run_virtual_loop;
+      myself = {};
+      inbox_map = {};
+      inbox_names = [];
       inboxes = [];
       get_inbox = function(name) {
         var inbox;
         inbox = flowbox();
-        flowboxes[name] = inbox;
+        myself[name] = inbox;
+        inbox_map[name] = inbox;
+        inbox_names.push(name);
         inboxes.push(inbox);
         return inbox;
       };
       get_outbox = function(name) {
         var my_outbox;
         my_outbox = outbox();
-        flowboxes[name] = my_outbox;
+        myself[name] = my_outbox;
         return my_outbox;
       };
       context = null;
@@ -45,7 +49,17 @@
         runVirtualLoop: run_virtual_loop
       };
       fun(context);
-      return flowboxes;
+      myself.withInputs = function(connections) {
+        var i, len, name;
+        for (i = 0, len = inbox_names.length; i < len; i++) {
+          name = inbox_names[i];
+          if (!!connections[name]) {
+            connections[name].setRecipient(inbox_map[name]);
+          }
+        }
+        return myself;
+      };
+      return myself;
     };
   };
 
