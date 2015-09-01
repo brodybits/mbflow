@@ -227,14 +227,77 @@ Note that I am using ES6 *only* to get the new `=>` function operator. Otherwise
 This test illustrates something about how Node.js works. Apparently, Node.js first run the user program script _and then_ listen
 to all of its ports (and timers, etc.) until it has no more ports or other items to listen to.
 
-## WIP: Web socket test
+## Simple web socket broadcast chat sample
 
-Requires npm ws module to be installed: `npm install ws`
+Serves a static HTTP file with a web socket chat client, and runs a web socket broadcast chat server.
+
+Requires the following npm ws modules to be installed: `npm install fs` and `npm install ws`
 
 Testing:
-- In shell: `node --harmony wss-test.js`
-- Open ws-chat-test.html in browser
+- In shell: `node --harmony wss-chat-sample.js`
+- In browser: open http://localhost:8000
 
+### Top-level code
+
+```Javascript
+// -----------------------------------------------------------------------------
+// Web Socket chat sample
+
+// Import(s):
+var composite = require('./composite.js');
+
+var fileReaderComponent = require('./fileReaderComponent.es6.js');
+var httpServerComponent = require('./httpServerComponent.js');
+var httpResponderComponent = require('./httpResponderComponent.es6.js');
+var webSocketServerComponent = require('./webSocketServerComponent.es6.js');
+var webSocketBroadcastComponent = require('./webSocketBroadcastComponent.es6.js');
+
+// Constant(s):
+var HTTP_PORT = 8000;
+var WS_PORT = 8080;
+
+// Components:
+
+var mycomponents = {
+  fileReaderComponent: fileReaderComponent,
+  httpServerComponent: httpServerComponent,
+  httpResponderComponent: httpResponderComponent,
+  webSocketServerComponent: webSocketServerComponent,
+  webSocketBroadcastComponent: webSocketBroadcastComponent,
+};
+
+// Pure JSON object:
+var myspec = {
+  myFileReader: {fileReaderComponent: {}},
+  myhttpsrv: {httpServerComponent: {}},
+  myhttpres: {httpResponderComponent: {inbox: {myhttpsrv: 'http_out'}, contents_inbox: {myFileReader: 'outbox'}}},
+  mywssrv: {webSocketServerComponent: {}},
+  mywssend: {webSocketBroadcastComponent: {inbox: {mywssrv: 'outbox'}}},
+};
+
+var c = composite(mycomponents, myspec);
+
+c.myFileReader.control_inbox.post({filename: 'ws-chat-test.html'});
+
+c.myhttpsrv.listen_port_inbox.post({ port: HTTP_PORT });
+c.mywssrv.control_inbox.post({ port: WS_PORT });
+
+// NOTE: due to the design of Node.js this will print before the HTTP server will actually start listening to the ports!
+console.log('setup finished');
+```
+
+Alternative code to setup the web socket broadcast chat components:
+
+```Javascript
+var myFileReader = fileReaderComponent();
+var myhttpsrv = httpServerComponent();
+var myhttpres = httpResponderComponent().withInputs({inbox: myhttpsrv.http_out, contents_inbox: myFileReader.outbox});
+
+var mywssrv = webSocketServerComponent();
+var mywsres = webSocketBroadcastComponent().withInputs({inbox: mywssrv.outbox});
+```
+
+FUTURE TBD it _should_ be possible to update the static HTML file without restarting the server!
 
 ## Coding notes
 
@@ -251,4 +314,9 @@ Testing:
 - Simple components should be in Javascript instead
 - Consider replacing _all_ CoffeeScript with ES6 which can be transpiled to ES3/ES5 and perhaps minimized
 - Separate license file
+- graceful shutdown mechanism ref: http://joseoncode.com/2014/07/21/graceful-shutdown-in-node-dot-js/
+
+## Extra references
+
+- http://blog.mixu.net/2011/02/01/understanding-the-node-js-event-loop/
 

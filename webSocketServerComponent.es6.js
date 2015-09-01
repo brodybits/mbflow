@@ -4,8 +4,7 @@ var WebSocketServer = require('ws').Server;
 
 var webSocketServerComponent = component((context) => {
   var control_inbox = context.inbox('control_inbox');
-  // FUTURE TBD:
-  //var outbox = context.outbox('outbox');
+  var outbox = context.outbox('outbox');
 
   context.runVirtualLoop((mycontext) => {
     var m = control_inbox.get();
@@ -17,6 +16,7 @@ var webSocketServerComponent = component((context) => {
       console.log('got ws connection');
       ws.on('message', (message) => {
         console.log('got ws message: ' + message);
+        outbox.post({wss: wss, ws: ws, message: message});
       });
 
       // FUTURE TODO send from downstream:
