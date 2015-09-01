@@ -97,7 +97,7 @@ or
 coffee simple-flowbox-test.coffee.md --node
 ```
 
-## Simple HTTP server sample
+## Simple HTTP multi-port server sample
 
 See [http-server-test.js](http-server-test.js)
 
@@ -108,6 +108,12 @@ node --harmony http-server-test.js
 ```
 
 and to access the local http server using something like:
+
+```shell
+curl http://localhost:8000/test-url
+```
+
+or
 
 ```shell
 curl http://localhost:8080/test-url
@@ -122,25 +128,31 @@ Here is the top-level Javascript:
 // Import(s):
 var httpServerComponent = require('./httpServerComponent.js');
 var httpTestHandlerComponent = require('./httpTestHandlerComponent.es6.js');
+var httpTestHandlerComponent2 = require('./httpTestHandlerComponent2.es6.js');
 
 // Constant(s):
-var PORT = 8080;
+var PORT1 = 8000;
+var PORT2 = 8080;
 
 // Components:
 var mysrv = httpServerComponent();
+var mysrv2 = httpServerComponent();
 var http_handler = httpTestHandlerComponent();
+var http_handler2 = httpTestHandlerComponent2();
 
-// Hook it up:
+// Hook them up:
 mysrv.http_out.setRecipient(http_handler.inbox);
+mysrv2.http_out.setRecipient(http_handler2.inbox);
 
-// Run the HTTP server
-mysrv.run_trigger.post({ port: PORT });
+// Listen to the HTTP server ports:
+mysrv.listen_port_inbox.post({ port: PORT1 });
+mysrv2.listen_port_inbox.post({ port: PORT2 });
 
-// NOTE: due to the design of Node.js this will print before the HTTP server will actually start listening:
+// NOTE: due to the design of Node.js this will print before the HTTP server will actually start listening to the ports!
 console.log('setup finished');
 ```
 
-and the test HTTP handler component in ES6:
+and a test HTTP handler component in ES6:
 
 ```Javascript
 var component = require('./component.js');
@@ -175,6 +187,9 @@ module.exports = httpTestHandlerComponent;
 ```
 
 Note that I am using ES6 *only* to get the new `=>` function operator. Otherwise it should be the same as ES5 (or maybe even ES3).
+
+This test illustrates something about how Node.js works. Apparently, Node.js first run the user program script _and then_ listen
+to all of its ports (and timers, etc.) until it has no more ports or other items to listen to.
 
 ## Coding notes
 

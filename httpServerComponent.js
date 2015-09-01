@@ -7,7 +7,7 @@
 
   httpServerComponent = component(function(context) {
     var handleReq, http_out, listen_port_inbox, srv;
-    listen_port_inbox = context.inbox('run_trigger');
+    listen_port_inbox = context.inbox('listen_port_inbox');
     http_out = context.outbox('http_out');
     handleReq = function(req, res) {
       console.log('Got request with url: ' + req.url);

@@ -10,7 +10,7 @@
 
     httpServerComponent = component (context) ->
       # input:
-      listen_port_inbox = context.inbox('run_trigger')
+      listen_port_inbox = context.inbox('listen_port_inbox')
 
       # output:
       http_out = context.outbox('http_out')
@@ -32,7 +32,7 @@
 
         return
 
-      # XXX TODO need a way to stop a HTTP server listener!
+      # XXX TODO needs a way to stop a HTTP server listener!
 
       return
 
