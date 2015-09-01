@@ -5,6 +5,7 @@ var WebSocketServer = require('ws').Server;
 var webSocketServerComponent = component((context) => {
   var control_inbox = context.inbox('control_inbox');
   var outbox = context.outbox('outbox');
+  var control_outbox = context.outbox('control_outbox');
 
   context.runVirtualLoop((mycontext) => {
     var m = control_inbox.get();
@@ -14,6 +15,11 @@ var webSocketServerComponent = component((context) => {
     var wss = new WebSocketServer({port: myport});
     wss.on('connection', (ws) => {
       console.log('got ws connection');
+
+      if (!control_outbox.isBlocked()) {
+        control_outbox.post({wss: wss, ws: ws});
+      }
+
       ws.on('message', (message) => {
         console.log('got ws message: ' + message);
         outbox.post({wss: wss, ws: ws, message: message});

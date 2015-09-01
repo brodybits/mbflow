@@ -1,14 +1,18 @@
 // -----------------------------------------------------------------------------
-// Web Socket chat sample
+// Web Socket broadcast chat sample
 
 // Import(s):
 var composite = require('./composite.js');
 
-var fileReaderComponent = require('./fileReaderComponent.es6.js');
-var httpServerComponent = require('./httpServerComponent.js');
-var httpResponderComponent = require('./httpResponderComponent.es6.js');
-var webSocketServerComponent = require('./webSocketServerComponent.es6.js');
-var webSocketBroadcastComponent = require('./webSocketBroadcastComponent.es6.js');
+var mycomponents = {
+    fileReaderComponent : require('./fileReaderComponent.es6.js'),
+    httpServerComponent : require('./httpServerComponent.js'),
+    httpResponderComponent : require('./httpResponderComponent.es6.js'),
+    webSocketServerComponent : require('./webSocketServerComponent.es6.js'),
+    webSocketBroadcastComponent : require('./webSocketBroadcastComponent.es6.js'),
+    webChatConnectionCounter : require('./webChatConnectionCounter.es6.js'),
+    combinerComponent : require('./combinerComponent.es6.js'),
+};
 
 // Constant(s):
 var HTTP_PORT = 8000;
@@ -16,21 +20,15 @@ var WS_PORT = 8080;
 
 // Components:
 
-var mycomponents = {
-  fileReaderComponent: fileReaderComponent,
-  httpServerComponent: httpServerComponent,
-  httpResponderComponent: httpResponderComponent,
-  webSocketServerComponent: webSocketServerComponent,
-  webSocketBroadcastComponent: webSocketBroadcastComponent,
-};
-
 // Pure JSON object:
 var myspec = {
   myFileReader: {fileReaderComponent: {}},
   myhttpsrv: {httpServerComponent: {}},
   myhttpres: {httpResponderComponent: {inbox: {myhttpsrv: 'http_out'}, contents_inbox: {myFileReader: 'outbox'}}},
   mywssrv: {webSocketServerComponent: {}},
-  mywssend: {webSocketBroadcastComponent: {inbox: {mywssrv: 'outbox'}}},
+  mycounter: {webChatConnectionCounter: {inbox: {mywssrv: 'control_outbox'}}},
+  mycombiner: {combinerComponent: {a_inbox: {mywssrv: 'outbox'}, b_inbox: {mycounter: 'outbox'}}},
+  mywssend: {webSocketBroadcastComponent: {inbox: {mycombiner: 'outbox'}}},
 };
 
 var c = composite(mycomponents, myspec);

@@ -33,6 +33,7 @@ It will support higher-level component flow and program assembly APIs to make th
 The component object now supports a virtual loop functionality, as shown in the sample HTTP server code below.
 
 The virtual loop will execute its function once every time a message is posted into an inbox of the component.
+
 FUTURE TBD/TODO:
 - If there is a pending message in an inbox and a downstream inbox is cleared, the virtual loop function should be triggered
 - The virtual loop function _should_ check the outbox before posting a message. More elegant solutions would include blocking the message processing when any or all outboxes are full and perhaps support for limited queueing.
@@ -229,7 +230,7 @@ to all of its ports (and timers, etc.) until it has no more ports or other items
 
 ## Simple web socket broadcast chat sample
 
-Serves a static HTTP file with a web socket chat client, and runs a web socket broadcast chat server.
+Serves a static HTTP file with a web socket chat client, and runs a web socket broadcast chat server. Also includes very simple, dumb connection counter and combiner components.
 
 Requires the following npm ws modules to be installed: `npm install fs` and `npm install ws`
 
@@ -237,20 +238,26 @@ Testing:
 - In shell: `node --harmony wss-chat-sample.js`
 - In browser: open http://localhost:8000
 
+FUTURE TBD it _should_ be possible to update the static HTML file without restarting the server!
+
 ### Top-level code
 
 ```Javascript
 // -----------------------------------------------------------------------------
-// Web Socket chat sample
+// Web Socket broadcast chat sample
 
 // Import(s):
 var composite = require('./composite.js');
 
-var fileReaderComponent = require('./fileReaderComponent.es6.js');
-var httpServerComponent = require('./httpServerComponent.js');
-var httpResponderComponent = require('./httpResponderComponent.es6.js');
-var webSocketServerComponent = require('./webSocketServerComponent.es6.js');
-var webSocketBroadcastComponent = require('./webSocketBroadcastComponent.es6.js');
+var mycomponents = {
+    fileReaderComponent : require('./fileReaderComponent.es6.js'),
+    httpServerComponent : require('./httpServerComponent.js'),
+    httpResponderComponent : require('./httpResponderComponent.es6.js'),
+    webSocketServerComponent : require('./webSocketServerComponent.es6.js'),
+    webSocketBroadcastComponent : require('./webSocketBroadcastComponent.es6.js'),
+    webChatConnectionCounter : require('./webChatConnectionCounter.es6.js'),
+    combinerComponent : require('./combinerComponent.es6.js'),
+};
 
 // Constant(s):
 var HTTP_PORT = 8000;
@@ -258,21 +265,15 @@ var WS_PORT = 8080;
 
 // Components:
 
-var mycomponents = {
-  fileReaderComponent: fileReaderComponent,
-  httpServerComponent: httpServerComponent,
-  httpResponderComponent: httpResponderComponent,
-  webSocketServerComponent: webSocketServerComponent,
-  webSocketBroadcastComponent: webSocketBroadcastComponent,
-};
-
 // Pure JSON object:
 var myspec = {
   myFileReader: {fileReaderComponent: {}},
   myhttpsrv: {httpServerComponent: {}},
   myhttpres: {httpResponderComponent: {inbox: {myhttpsrv: 'http_out'}, contents_inbox: {myFileReader: 'outbox'}}},
   mywssrv: {webSocketServerComponent: {}},
-  mywssend: {webSocketBroadcastComponent: {inbox: {mywssrv: 'outbox'}}},
+  mycounter: {webChatConnectionCounter: {inbox: {mywssrv: 'control_outbox'}}},
+  mycombiner: {combinerComponent: {a_inbox: {mywssrv: 'outbox'}, b_inbox: {mycounter: 'outbox'}}},
+  mywssend: {webSocketBroadcastComponent: {inbox: {mycombiner: 'outbox'}}},
 };
 
 var c = composite(mycomponents, myspec);
@@ -286,7 +287,7 @@ c.mywssrv.control_inbox.post({ port: WS_PORT });
 console.log('setup finished');
 ```
 
-Alternative code to setup the web socket broadcast chat components:
+Alternative code to setup the web socket broadcast chat components from `wss-alt-chat-test.js` (changes to imports omitted):
 
 ```Javascript
 var myFileReader = fileReaderComponent();
@@ -294,10 +295,35 @@ var myhttpsrv = httpServerComponent();
 var myhttpres = httpResponderComponent().withInputs({inbox: myhttpsrv.http_out, contents_inbox: myFileReader.outbox});
 
 var mywssrv = webSocketServerComponent();
-var mywsres = webSocketBroadcastComponent().withInputs({inbox: mywssrv.outbox});
+var mycounter = webChatConnectionCounter().withInputs({inbox: mywssrv.control_outbox});
+var mycombiner = combinerComponent().withInputs({a_inbox: mywssrv.outbox, b_inbox: mycounter.outbox});
+var mywsres = webSocketBroadcastComponent().withInputs({inbox: mycombiner.outbox});
 ```
 
-FUTURE TBD it _should_ be possible to update the static HTML file without restarting the server!
+### Simple connection counter component
+
+```Javascript
+var component = require('./component.js');
+
+var webChatConnectionCounter = component((context) => {
+  var inbox = context.inbox('inbox');
+  var outbox = context.outbox('outbox');
+
+  var count = 0;
+
+  context.runVirtualLoop((mycontext) => {
+    if (inbox.isFull()) {
+      var m = inbox.get();
+      var wss = m.wss;
+
+      count++;
+      outbox.post({wss: wss, message: 'New connection, total count: ' + count});
+    }
+  });
+});
+
+module.exports = webChatConnectionCounter;
+```
 
 ## Coding notes
 
