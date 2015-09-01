@@ -9,18 +9,14 @@
 #### HTTP server function
 
     httpServerComponent = component (context) ->
-      # run trigger flow-box:
-      run_trigger = context.inbox('run_trigger')
+      # input:
+      listen_port_inbox = context.inbox('run_trigger')
 
-      # output flow mailboxes:
+      # output:
       http_out = context.outbox('http_out')
-      log_out = context.outbox('log_out')
-
-      # internal helper function(s):
-      mylog = (s) -> if !log_out.isBlocked() then log_out.post s
 
       handleReq = (req, res) ->
-        mylog 'Got request with url: ' + req.url
+        console.log 'Got request with url: ' + req.url
         http_out.post
           req: req
           res: res
@@ -28,11 +24,17 @@
       srv = http.createServer handleReq
 
       context.runVirtualLoop (context) ->
-        opt = run_trigger.get()
+        opt = listen_port_inbox.get()
         myport = opt.port
         srv.listen myport, ->
-          mylog 'SERVER is listening to port: ' + myport
+          console.log 'SERVER is listening to port: ' + myport
+          return
 
+        return
+
+      # XXX TODO need a way to stop a HTTP server listener!
+
+      return
 
 ## export
 
