@@ -119,7 +119,46 @@ or
 curl http://localhost:8080/test-url
 ```
 
-Here is the top-level Javascript:
+Here is the top-level Javascript, now with the flow specified in JSON as part of a composite object:
+
+```Javascript
+// -----------------------------------------------------------------------------
+// HTTP server component test
+
+// Import(s):
+var composite = require('./composite.js');
+var httpServerComponent = require('./httpServerComponent.js');
+var httpTestHandlerComponent = require('./httpTestHandlerComponent.es6.js');
+var httpTestHandlerComponent2 = require('./httpTestHandlerComponent2.es6.js');
+
+// Constant(s):
+var PORT1 = 8000;
+var PORT2 = 8080;
+
+var mycomponents = {
+  httpServerComponent: httpServerComponent,
+  httpTestHandlerComponent: httpTestHandlerComponent,
+  httpTestHandlerComponent2: httpTestHandlerComponent2,
+};
+
+// Pure JSON object:
+var myspec = {
+  mysrv: { httpServerComponent: {}},
+  mysrv2: { httpServerComponent: {}},
+  http_handler: { httpTestHandlerComponent: {inbox: {mysrv: 'http_out'}}},
+  http_handler2: { httpTestHandlerComponent2: {inbox: {mysrv2: 'http_out'}}},
+};
+
+var c = composite(mycomponents, myspec);
+
+c.mysrv.listen_port_inbox.post({ port: PORT1 });
+c.mysrv2.listen_port_inbox.post({ port: PORT2 });
+
+// NOTE: due to the design of Node.js this will print before the HTTP server will actually start listening to the ports!
+console.log('setup finished');
+```
+
+or a simpler alternative that does not use a pure-JSON specification object:
 
 ```Javascript
 // -----------------------------------------------------------------------------
@@ -198,6 +237,7 @@ to all of its ports (and timers, etc.) until it has no more ports or other items
 
 ## Future TODO
 
+- Add error checking to the composite object
 - Simple components should be in Javascript instead
 - Consider replacing _all_ CoffeeScript with ES6 which can be transpiled to ES3/ES5
 - Separate license file
