@@ -1,0 +1,31 @@
+<html>
+<head>
+<script>
+function log_message(message) {
+  // ref: http://stackoverflow.com/a/1750455/1283667
+  var log_div = document.getElementById('log');
+  var p = document.createElement('p');
+  p.appendChild(document.createTextNode(message));
+  log_div.appendChild(p);
+}
+
+// ref: https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_client_applications
+var ws = new WebSocket("ws://localhost:8080");
+ws.onmessage = function(ev) {
+  log_message('Received: ' + ev.data);
+}
+
+function onClick() {
+  var message = document.getElementById('message').value;
+  ws.send(message);
+  log_message('Sent: ' + message);
+  document.getElementById('message').value = '';
+}
+</script>
+</head>
+<body>
+<input id='message' type='text'></input>
+<button type="text" id='send' name='send' onClick='onClick()'>Send</button>
+<div id='log'></div>
+</body>
+</html>

@@ -227,18 +227,28 @@ Note that I am using ES6 *only* to get the new `=>` function operator. Otherwise
 This test illustrates something about how Node.js works. Apparently, Node.js first run the user program script _and then_ listen
 to all of its ports (and timers, etc.) until it has no more ports or other items to listen to.
 
+## WIP: Web socket test
+
+Requires npm ws module to be installed: `npm install ws`
+
+Testing:
+- In shell: `node --harmony wss-test.js`
+- Open ws-chat-test.html in browser
+
+
 ## Coding notes
 
-- Using CoffeeScript that is compiled to Javascript (ES3/ES5) for all library classes
+- Using CoffeeScript that is compiled to Javascript (ES3/ES5) for all common library classes, i.e. flowbox/outbox/component/composite (as well as HTTP server component)
 - Using the simplest subset possible, i.e. no classes (which are sugar anyway), avoid `new` and `this` (unless absolutely necessary someday). Here are a couple of links for reference:
   - http://radar.oreilly.com/2014/03/javascript-without-the-this.html
   - https://nemisj.com/js-without-new-and-this/
 - All components should be kept as simple as possible.
 
-## Future TODO
+## Future/TODO
 
+- Automatic testing
 - Add error checking to the composite object
 - Simple components should be in Javascript instead
-- Consider replacing _all_ CoffeeScript with ES6 which can be transpiled to ES3/ES5
+- Consider replacing _all_ CoffeeScript with ES6 which can be transpiled to ES3/ES5 and perhaps minimized
 - Separate license file
 
