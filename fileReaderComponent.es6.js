@@ -3,8 +3,8 @@ var component = require('./component.js');
 var fs = require('fs');
 
 var fileReaderComponent = component((context) => {
-  var control_inbox = context.inbox('control_inbox');
-  var outbox = context.outbox('outbox');
+  var control_inbox = context.inport('control_inbox', {inportType: 'inbox', flowStyle: 'inline'});
+  var outbox = context.outport('outbox', {outportType: 'outbox', flowStyle: 'inline'});
 
   context.runVirtualLoop((mycontext) => {
     var m = control_inbox.get();

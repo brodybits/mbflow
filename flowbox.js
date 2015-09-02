@@ -1,12 +1,15 @@
 (function() {
   var flowbox;
 
-  flowbox = function() {
+  flowbox = function(opts) {
     var contents, full, get, hasContents, hasListener, isBlocked, isFull, listener, myself, post, setListener;
     myself = void 0;
     full = false;
     contents = null;
     listener = null;
+    if (!!opts && !!opts.flowStyle && opts.flowStyle !== 'inline') {
+      throw new Exception('Only inline flow style is supported');
+    }
     isFull = function() {
       return full;
     };

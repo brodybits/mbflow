@@ -1,4 +1,4 @@
-# Mailbox flow system
+# Simple Javascript flow system based on internal mailboxes
 
 Simple flow-based ES3/ES5/ES6 (Javascript) execution system based on simple mailboxes, based on the [Flow-based programming (fbp)](http://www.jpaulmorrison.com/fbp/) concept, for Node.JS and other CommonJS implementations. Does not need any new features such as "Fibers" (which will not work on browsers), generators, etc.
 
@@ -13,30 +13,22 @@ In case I accept and include contributions in the future I will require a simila
 
 ## Overall architecture/design
 
-A program or system would be a [directed acyclic graph (dag)](https://en.wikipedia.org/wiki/Directed_acyclic_graph) of components
-that are connected to each other via very simple message flow mailboxes. Each message flow mailbox can hold only one message,
-which is an arbitrary object. When a sender puts a message into a mailbox, it calls the trigger function on the listener if it is
-connected and the listener _may_ get and consume the message from the message flow mailbox. Queueing can be added as special
-components or within existing components.
+A program or system is a [directed acyclic graph (dag)](https://en.wikipedia.org/wiki/Directed_acyclic_graph) of components that
+are connected to each other via inport-outport connections, which are currently based on simple mailbox objects.
+An inport is a message flow inbox or "flowbox" that currently supports only an "inline" flow style and holds a single message for
+processing. An outport is a message flow "outbox" that posts each message into a connected inport.
+Other types of inports and outports may be added in the future.
 
-Certain Node.js functions, such as http server listen(), will block the main program flow. In this case, the main program can
-post a control command into the server object and it will block while the server object is listening. Whenever the
-server function send calls a server object callback, and the callback posts the message into a mailbox, the listener
-will be able to handle the message and send it on.
+When a sender puts a message into an inbox or "flowbox" (directly or through a connected outbox), it calls a trigger callback on
+the listener if one is connected and the listener _may_ get and consume the message from the message flow mailbox.
+Queueing can be added as special components or within existing components in the future.
 
-So the message flow mailbox, called a "flowbox" here, acts to provide both data flow control and program execution flow control.
-
-There is also an "outbox" object, that can be part of one component and connected to an input "flowbox" on another component.
-
-There is now a "component" object that can be used to define components, and keep track of its input and output flow boxes.
-It will support higher-level component flow and program assembly APIs to make this library easier to use.
-The component object now supports a virtual loop functionality, as shown in the sample HTTP server code below.
-
+There is a "component" object that can be used to define components, and keep track of its inport and outport interfaces.
+The component object supports a virtual loop functionality, as shown in the sample HTTP server code below.
 The virtual loop will execute its function once every time a message is posted into an inbox of the component.
 
-FUTURE TBD/TODO:
-- If there is a pending message in an inbox and a downstream inbox is cleared, the virtual loop function should be triggered
-- The virtual loop function _should_ check the outbox before posting a message. More elegant solutions would include blocking the message processing when any or all outboxes are full and perhaps support for limited queueing.
+There is also a "composite" object that can be used to define a system of components that are connected based on a
+pure Javascript object that can be defined in JSON.
 
 This project takes its inspiration from the following projects:
 - [Flow-based programming (fbp)](http://www.jpaulmorrison.com/fbp/) which has its own user group as well as some reference implementations at: http://www.jpaulmorrison.com/fbp/software.html
@@ -128,21 +120,18 @@ Here is the top-level Javascript, now with the flow specified in JSON as part of
 
 // Import(s):
 var composite = require('./composite.js');
-var httpServerComponent = require('./httpServerComponent.js');
-var httpTestHandlerComponent = require('./httpTestHandlerComponent.es6.js');
-var httpTestHandlerComponent2 = require('./httpTestHandlerComponent2.es6.js');
+
+var mycomponents = {
+    httpServerComponent : require('./httpServerComponent.js'),
+    httpTestHandlerComponent : require('./httpTestHandlerComponent.es6.js'),
+    httpTestHandlerComponent2 : require('./httpTestHandlerComponent2.es6.js'),
+};
 
 // Constant(s):
 var PORT1 = 8000;
 var PORT2 = 8080;
 
-var mycomponents = {
-  httpServerComponent: httpServerComponent,
-  httpTestHandlerComponent: httpTestHandlerComponent,
-  httpTestHandlerComponent2: httpTestHandlerComponent2,
-};
-
-// Pure JSON object:
+// Specification as pure JSON object:
 var myspec = {
   mysrv: { httpServerComponent: {}},
   mysrv2: { httpServerComponent: {}},
@@ -150,8 +139,10 @@ var myspec = {
   http_handler2: { httpTestHandlerComponent2: {inbox: {mysrv2: 'http_out'}}},
 };
 
+// Create the system:
 var c = composite(mycomponents, myspec);
 
+// Push the configuration:
 c.mysrv.listen_port_inbox.post({ port: PORT1 });
 c.mysrv2.listen_port_inbox.post({ port: PORT2 });
 
@@ -195,7 +186,7 @@ and a test HTTP handler component in ES6:
 var component = require('./component.js');
 
 var httpTestHandlerComponent = component((context) => {
-  var inbox = context.inbox('inbox');
+  var inbox = context.inport('inbox', {inportType: 'inbox', flowStyle: 'inline'});
 
   context.runVirtualLoop((mycontext) => {
     var m = inbox.get();
@@ -335,12 +326,20 @@ module.exports = webChatConnectionCounter;
 
 ## Future/TODO
 
+- Organize with proper directory structure
 - Automatic testing
 - Add error checking to the composite object
 - Simple components should be in Javascript instead
 - Consider replacing _all_ CoffeeScript with ES6 which can be transpiled to ES3/ES5 and perhaps minimized
 - Separate license file
 - graceful shutdown mechanism ref: http://joseoncode.com/2014/07/21/graceful-shutdown-in-node-dot-js/
+- Message queueing component
+- Support for limited message queueing in inports/outports
+- The virtual loop function in each of the core components _should_ check that an outbox is not blocked before posting any messages
+- Possibility to block the triggering of processing of messages from some or all inports when an outport is blocked
+- The virtual loop function _should_ check the outbox before posting a message. More elegant solutions would include blocking the message processing when any or all outboxes are full and perhaps support for limited queueing.
+- A component's virtual loop function should also be triggered in case there are any pending input messages and a message in the downstream inbox is processed
+- Additional types of inports and outports, additional message flow mechanism (such as processing in the next tick), and message queueing mechanism(s)
 
 ## Extra references
 

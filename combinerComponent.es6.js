@@ -1,9 +1,9 @@
 var component = require('./component.js');
 
 var combinerComponent = component((context) => {
-  var a_inbox = context.inbox('a_inbox');
-  var b_inbox = context.inbox('b_inbox');
-  var outbox = context.outbox('outbox');
+  var a_inbox = context.inport('a_inbox', {inportType: 'inbox', flowStyle: 'inline'});
+  var b_inbox = context.inport('b_inbox', {inportType: 'inbox', flowStyle: 'inline'});
+  var outbox = context.outport('outbox', {outportType: 'outbox', flowStyle: 'inline'});
 
   var count = 0;
 

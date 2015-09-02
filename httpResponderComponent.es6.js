@@ -1,8 +1,8 @@
 var component = require('./component.js');
 
 var httpResponderComponent = component((context) => {
-  var contents_inbox = context.inbox('contents_inbox');
-  var inbox = context.inbox('inbox');
+  var contents_inbox = context.inport('contents_inbox', {inportType: 'inbox', flowStyle: 'inline'});
+  var inbox = context.inport('inbox', {inportType: 'inbox', flowStyle: 'inline'});
 
   var contents = 'default data';
 

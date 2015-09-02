@@ -2,7 +2,7 @@
 
     flowbox = require './flowbox.js'
 
-    mybox = flowbox()
+    mybox = flowbox { flowStyle: 'inline' }
 
     # will be blocked:
     mybox.post { a: 1, b: 'hello' }

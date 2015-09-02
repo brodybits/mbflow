@@ -12,6 +12,9 @@
     myspec = {};
     for (s in spec) {
       for (c in spec[s]) {
+        if (!mycomponents[c]) {
+          throw new Exception('No such component ' + c);
+        }
         mycomponent = mycomponents[c]();
         myspec[s] = mycomponent;
         for (i in spec[s][c]) {

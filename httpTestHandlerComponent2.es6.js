@@ -1,7 +1,7 @@
 var component = require('./component.js');
 
 var httpTestHandlerComponent2 = component((context) => {
-  var inbox = context.inbox('inbox');
+  var inbox = context.inport('inbox', {inportType: 'inbox', flowStyle: 'inline'});
 
   context.runVirtualLoop((mycontext) => {
     var m = inbox.get();

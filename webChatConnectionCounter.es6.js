@@ -4,8 +4,8 @@ var webChatConnectionCounter = component((context) => {
   // FUTURE TODO:
   // - get disconnect event and reduce counter if a client is disconnected
   // - control input to reset the counter
-  var inbox = context.inbox('inbox');
-  var outbox = context.outbox('outbox');
+  var inbox = context.inport('inbox', {inportType: 'inbox', flowStyle: 'inline'});
+  var outbox = context.outport('outbox', {outportType: 'outbox', flowStyle: 'inline'});
 
   var count = 0;
 

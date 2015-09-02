@@ -3,8 +3,8 @@
 
 ## Import(s)
 
-    flowbox = require('./flowbox.js')
-    outbox = require('./outbox.js')
+    inport = require('./inport.js')
+    outport = require('./outport.js')
 
 ## component object function
 
@@ -13,46 +13,49 @@
       ->
         myself = {}
 
-        inbox_map = {}
-        inbox_names = []
-        inboxes = []
+        inport_map = {}
+        inport_names = []
+        inports = []
 
-        get_inbox = (name) ->
-          inbox = flowbox()
-          myself[name] = inbox
-          inbox_map[name] = inbox
-          inbox_names.push name
-          inboxes.push inbox
-          inbox
+        get_inport = (name, opts) ->
+          my_inport = inport(opts)
+          myself[name] = my_inport
+          inport_map[name] = my_inport
+          inport_names.push name
+          inports.push my_inport
+          my_inport
 
-        get_outbox = (name) ->
-          my_outbox = outbox()
-          myself[name] = my_outbox
-          my_outbox
+        get_outport = (name, opts) ->
+          my_outport = outport(opts)
+          myself[name] = my_outport
+          my_outport
 
         context = null # will fill below
 
         run_virtual_loop = (loop_fun) ->
-          inbox_handler =
+          inport_handler =
             onPost: (mb) ->
               # TBD should the same context be given again ??
               loop_fun context
 
-          for inbox in inboxes
-            inbox.setListener null # prevent a possible exception
-            inbox.setListener inbox_handler
+          for i in inports
+            i.setListener null # prevent a possible exception
+            i.setListener inport_handler
 
         context =
-          inbox: get_inbox
-          outbox: get_outbox
+          inport: get_inport
+          outport: get_outport
           runVirtualLoop: run_virtual_loop
+          # XXX legacy (will go away):
+          inbox: get_inport
+          outbox: get_outport
 
         fun context
 
         myself.withInputs = (connections) ->
-          for name in inbox_names
+          for name in inport_names
             if !!connections[name]
-              connections[name].setRecipient inbox_map[name]
+              connections[name].setRecipient inport_map[name]
 
           return myself
 

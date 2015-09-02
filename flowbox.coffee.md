@@ -4,7 +4,7 @@
 
 ## flowbox object without 'new' or 'this' keywords
 
-    flowbox = ->
+    flowbox = (opts) ->
       # *declare* self:
       myself = undefined
 
@@ -12,6 +12,9 @@
       full = false
       contents = null
       listener = null
+
+      if !!opts and !!opts.flowStyle and opts.flowStyle != 'inline'
+        throw new Exception 'Only inline flow style is supported'
 
       isFull = -> full
 

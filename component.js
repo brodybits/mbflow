@@ -1,60 +1,62 @@
 (function() {
-  var component, flowbox, outbox;
+  var component, inport, outport;
 
-  flowbox = require('./flowbox.js');
+  inport = require('./inport.js');
 
-  outbox = require('./outbox.js');
+  outport = require('./outport.js');
 
   component = function(fun) {
     return function() {
-      var context, get_inbox, get_outbox, inbox_map, inbox_names, inboxes, myself, run_virtual_loop;
+      var context, get_inport, get_outport, inport_map, inport_names, inports, myself, run_virtual_loop;
       myself = {};
-      inbox_map = {};
-      inbox_names = [];
-      inboxes = [];
-      get_inbox = function(name) {
-        var inbox;
-        inbox = flowbox();
-        myself[name] = inbox;
-        inbox_map[name] = inbox;
-        inbox_names.push(name);
-        inboxes.push(inbox);
-        return inbox;
+      inport_map = {};
+      inport_names = [];
+      inports = [];
+      get_inport = function(name, opts) {
+        var my_inport;
+        my_inport = inport(opts);
+        myself[name] = my_inport;
+        inport_map[name] = my_inport;
+        inport_names.push(name);
+        inports.push(my_inport);
+        return my_inport;
       };
-      get_outbox = function(name) {
-        var my_outbox;
-        my_outbox = outbox();
-        myself[name] = my_outbox;
-        return my_outbox;
+      get_outport = function(name, opts) {
+        var my_outport;
+        my_outport = outport(opts);
+        myself[name] = my_outport;
+        return my_outport;
       };
       context = null;
       run_virtual_loop = function(loop_fun) {
-        var i, inbox, inbox_handler, len, results;
-        inbox_handler = {
+        var i, inport_handler, j, len, results;
+        inport_handler = {
           onPost: function(mb) {
             return loop_fun(context);
           }
         };
         results = [];
-        for (i = 0, len = inboxes.length; i < len; i++) {
-          inbox = inboxes[i];
-          inbox.setListener(null);
-          results.push(inbox.setListener(inbox_handler));
+        for (j = 0, len = inports.length; j < len; j++) {
+          i = inports[j];
+          i.setListener(null);
+          results.push(i.setListener(inport_handler));
         }
         return results;
       };
       context = {
-        inbox: get_inbox,
-        outbox: get_outbox,
-        runVirtualLoop: run_virtual_loop
+        inport: get_inport,
+        outport: get_outport,
+        runVirtualLoop: run_virtual_loop,
+        inbox: get_inport,
+        outbox: get_outport
       };
       fun(context);
       myself.withInputs = function(connections) {
-        var i, len, name;
-        for (i = 0, len = inbox_names.length; i < len; i++) {
-          name = inbox_names[i];
+        var j, len, name;
+        for (j = 0, len = inport_names.length; j < len; j++) {
+          name = inport_names[j];
           if (!!connections[name]) {
-            connections[name].setRecipient(inbox_map[name]);
+            connections[name].setRecipient(inport_map[name]);
           }
         }
         return myself;

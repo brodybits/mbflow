@@ -7,8 +7,14 @@
 
   httpServerComponent = component(function(context) {
     var handleReq, http_out, listen_port_inbox, srv;
-    listen_port_inbox = context.inbox('listen_port_inbox');
-    http_out = context.outbox('http_out');
+    listen_port_inbox = context.inport('listen_port_inbox', {
+      inportType: 'inbox',
+      flowStyle: 'inline'
+    });
+    http_out = context.outport('http_out', {
+      outportType: 'outbox',
+      flowStyle: 'inline'
+    });
     handleReq = function(req, res) {
       console.log('Got request with url: ' + req.url);
       return http_out.post({

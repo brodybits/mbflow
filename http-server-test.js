@@ -3,21 +3,18 @@
 
 // Import(s):
 var composite = require('./composite.js');
-var httpServerComponent = require('./httpServerComponent.js');
-var httpTestHandlerComponent = require('./httpTestHandlerComponent.es6.js');
-var httpTestHandlerComponent2 = require('./httpTestHandlerComponent2.es6.js');
+
+var mycomponents = {
+    httpServerComponent : require('./httpServerComponent.js'),
+    httpTestHandlerComponent : require('./httpTestHandlerComponent.es6.js'),
+    httpTestHandlerComponent2 : require('./httpTestHandlerComponent2.es6.js'),
+};
 
 // Constant(s):
 var PORT1 = 8000;
 var PORT2 = 8080;
 
-var mycomponents = {
-  httpServerComponent: httpServerComponent,
-  httpTestHandlerComponent: httpTestHandlerComponent,
-  httpTestHandlerComponent2: httpTestHandlerComponent2,
-};
-
-// Pure JSON object:
+// Specification as pure JSON object:
 var myspec = {
   mysrv: { httpServerComponent: {}},
   mysrv2: { httpServerComponent: {}},
@@ -25,8 +22,10 @@ var myspec = {
   http_handler2: { httpTestHandlerComponent2: {inbox: {mysrv2: 'http_out'}}},
 };
 
+// Create the system:
 var c = composite(mycomponents, myspec);
 
+// Push the configuration:
 c.mysrv.listen_port_inbox.post({ port: PORT1 });
 c.mysrv2.listen_port_inbox.post({ port: PORT2 });
 

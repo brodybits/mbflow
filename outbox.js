@@ -1,9 +1,12 @@
 (function() {
   var outbox;
 
-  outbox = function() {
+  outbox = function(opts) {
     var hasRecipient, isBlocked, post, recipient, setRecipient;
     recipient = null;
+    if (!!opts && !!opts.flowStyle && opts.flowStyle !== 'inline') {
+      throw new Exception('Only inline flow style is supported');
+    }
     hasRecipient = function() {
       return !!recipient;
     };
@@ -12,7 +15,10 @@
     };
     setRecipient = function(newRecipient) {
       if (!!newRecipient && !!recipient) {
-        throw new Error("outbox already has a recipient");
+        throw new Error('outbox already has a recipient');
+      }
+      if (!!recipient && !recipient.get) {
+        throw new Error('recipient does not support inbox get function');
       }
       recipient = newRecipient;
       return newRecipient;

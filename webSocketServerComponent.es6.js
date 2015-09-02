@@ -3,9 +3,9 @@ var component = require('./component.js');
 var WebSocketServer = require('ws').Server;
 
 var webSocketServerComponent = component((context) => {
-  var control_inbox = context.inbox('control_inbox');
-  var outbox = context.outbox('outbox');
-  var control_outbox = context.outbox('control_outbox');
+  var control_inbox = context.inport('control_inbox', {inportType: 'inbox', flowStyle: 'inline'});
+  var outbox = context.outport('outbox', {outportType: 'outbox', flowStyle: 'inline'});
+  var control_outbox = context.outport('control_outbox', {outportType: 'outbox', flowStyle: 'inline'});
 
   context.runVirtualLoop((mycontext) => {
     var m = control_inbox.get();

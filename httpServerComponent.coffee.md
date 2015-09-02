@@ -10,10 +10,10 @@
 
     httpServerComponent = component (context) ->
       # input:
-      listen_port_inbox = context.inbox('listen_port_inbox')
+      listen_port_inbox = context.inport('listen_port_inbox', {inportType: 'inbox', flowStyle: 'inline'})
 
       # output:
-      http_out = context.outbox('http_out')
+      http_out = context.outport('http_out', {outportType: 'outbox', flowStyle: 'inline'})
 
       handleReq = (req, res) ->
         console.log 'Got request with url: ' + req.url

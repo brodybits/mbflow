@@ -14,7 +14,6 @@
       # FUTURE TBD in a registry object instead?
       mycomponents = {}
       for n of components
-        #console.log 'found component name: ' + n
         mycomponents[n] = components[n]
 
       myspec = {}
@@ -25,7 +24,7 @@
 
         for c of spec[s]
           # only once per spec item:
-          #console.log 'spec entry component: ' + c
+          if !mycomponents[c] then throw new Exception 'No such component ' + c
           mycomponent = mycomponents[c]()
           myspec[s] = mycomponent
 
