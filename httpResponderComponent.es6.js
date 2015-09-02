@@ -7,11 +7,11 @@ var httpResponderComponent = component((context) => {
   var contents = 'default data';
 
   context.runVirtualLoop((mycontext) => {
-    if (contents_inbox.isFull()) {
+    if (contents_inbox.hasContents()) {
       contents = contents_inbox.get();
     }
 
-    if (inbox.isFull()) {
+    if (inbox.hasContents()) {
       var m = inbox.get();
       m.res.end(contents);
     }

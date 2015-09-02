@@ -2,12 +2,15 @@
   var flowbox;
 
   flowbox = function() {
-    var contents, full, get, hasListener, isBlocked, isFull, listener, myself, post, setListener;
+    var contents, full, get, hasContents, hasListener, isBlocked, isFull, listener, myself, post, setListener;
     myself = void 0;
     full = false;
     contents = null;
     listener = null;
     isFull = function() {
+      return full;
+    };
+    hasContents = function() {
       return full;
     };
     hasListener = function() {
@@ -49,6 +52,7 @@
     };
     return myself = {
       isFull: isFull,
+      hasContents: hasContents,
       hasListener: hasListener,
       isBlocked: isBlocked,
       setListener: setListener,

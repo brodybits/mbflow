@@ -15,6 +15,8 @@
 
       isFull = -> full
 
+      hasContents = -> full
+
       hasListener = -> !!listener
 
       isBlocked = -> full or !listener
@@ -47,6 +49,7 @@
       # store and return my self reference:
       myself =
         isFull: isFull
+        hasContents: hasContents
         hasListener: hasListener
         isBlocked: isBlocked
         setListener: setListener

@@ -2,11 +2,8 @@
   var outbox;
 
   outbox = function() {
-    var hasRecipient, isBlocked, isFull, post, recipient, setRecipient;
+    var hasRecipient, isBlocked, post, recipient, setRecipient;
     recipient = null;
-    isFull = function() {
-      return full;
-    };
     hasRecipient = function() {
       return !!recipient;
     };
@@ -27,7 +24,6 @@
       recipient.post(message);
     };
     return {
-      isFull: isFull,
       hasRecipient: hasRecipient,
       isBlocked: isBlocked,
       setRecipient: setRecipient,

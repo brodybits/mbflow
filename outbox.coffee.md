@@ -6,7 +6,8 @@
       # private local variables:
       recipient = null
 
-      isFull = -> full
+      # FUTURE TBD ???:
+      #isFull = -> full
 
       hasRecipient = -> !!recipient
 
@@ -26,7 +27,6 @@
         return
 
       # return:
-      isFull: isFull
       hasRecipient: hasRecipient
       isBlocked: isBlocked
       setRecipient: setRecipient

@@ -8,12 +8,12 @@ var combinerComponent = component((context) => {
   var count = 0;
 
   context.runVirtualLoop((mycontext) => {
-    if (a_inbox.isFull()) {
+    if (a_inbox.hasContents()) {
       var m = a_inbox.get();
       outbox.post(m);
     }
 
-    if (b_inbox.isFull()) {
+    if (b_inbox.hasContents()) {
       var m = b_inbox.get();
       outbox.post(m);
     }
